@@ -15,7 +15,8 @@ public class EntryPoint extends Application {
     	FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Metro.fxml"));
         Parent root = loader.load();
         
-    	Model m = new Model();
+    	//***NB FARE SEMPRE***
+        Model m = new Model();
     	MetroController c = loader.getController() ;
     	c.setModel(m);
     	

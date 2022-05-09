@@ -10,6 +10,7 @@ import org.jgrapht.event.VertexTraversalEvent;
 import org.jgrapht.graph.DefaultEdge;
 
 public class RegistraAlberoDiVisita implements TraversalListener<Fermata, DefaultEdge> {
+	//***NOTA BENE***
 	
 	private Graph<Fermata, DefaultEdge> grafo;
 	private Map<Fermata,Fermata> alberoInverso ;

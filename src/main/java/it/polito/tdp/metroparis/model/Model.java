@@ -10,7 +10,7 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
-import org.jgrapht.traverse.DepthFirstIterator;
+//import org.jgrapht.traverse.DepthFirstIterator;
 import org.jgrapht.traverse.GraphIterator;
 
 import it.polito.tdp.metroparis.db.MetroDAO;
@@ -23,7 +23,7 @@ public class Model {
 	private Graph<Fermata, DefaultEdge> grafo;
 
 	public List<Fermata> getFermate() {
-		if (this.fermate == null) {
+		if (this.fermate == null) { //faccio la queri solo se fermate è vuoto
 			MetroDAO dao = new MetroDAO();
 			this.fermate = dao.getAllFermate();
 			
@@ -37,8 +37,18 @@ public class Model {
 	
 	public List<Fermata> calcolaPercorso(Fermata partenza, Fermata arrivo) {
 		creaGrafo() ;
-		visitaGrafo(partenza);
-		return null ;
+		Map<Fermata,Fermata> alberoInverso = visitaGrafo(partenza);
+		
+		Fermata corrente=arrivo;
+		List<Fermata> percorso= new ArrayList<>();
+		
+		while(corrente!=null) { //aggiungo tutti i nodi andando al contrario
+			percorso.add(0, corrente); //per aggiungere a inizio lista e avere poi il percorso
+									  // nell'ordine che vogliamo
+			corrente=alberoInverso.get(corrente);
+		}
+		
+		return percorso;
 	}
 
 	public void creaGrafo() {
@@ -61,18 +71,21 @@ public class Model {
 
 	
 	
-	public void visitaGrafo(Fermata partenza) {
+	public Map<Fermata,Fermata> visitaGrafo(Fermata partenza) {
 		GraphIterator<Fermata, DefaultEdge> visita = new BreadthFirstIterator<>(this.grafo, partenza);
 		
 		Map<Fermata,Fermata> alberoInverso = new HashMap<>() ;
 		alberoInverso.put(partenza, null) ;
 		
+		//aggiungo un ascoltatore
 		visita.addTraversalListener(new RegistraAlberoDiVisita(alberoInverso, this.grafo));
+		
 		while (visita.hasNext()) {
 			Fermata f = visita.next();
 //			System.out.println(f);
 		}
 		
+		return alberoInverso;
 		
 		// Ricostruiamo il percorso a partire dall'albero inverso (pseudo-code)
 //		List<Fermata> percorso = new ArrayList<>() ;
